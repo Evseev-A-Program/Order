@@ -6,6 +6,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,9 +22,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long offer;
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn(name = "order_id"))
+    private List<Long> offers;
 
-    private String name;
+   // private String name;
 
     private LocalDate deliveryTime;
 
@@ -36,5 +40,13 @@ public class Order {
 
     public Order() {
 
+    }
+
+    public void addOffer(Long id) {
+        offers.add(id);
+    }
+
+    public void deleteOffer(Long id) {
+        offers.remove(id);
     }
 }

@@ -16,10 +16,10 @@ public class OrdersController {
 
     private final OrderService orderService;
 
-    @PostMapping("/add")
-    public ResponseEntity addOrder(@RequestBody Order order) {
+    @GetMapping("/add")
+    public ResponseEntity addOrder(@RequestParam Long customerId, Long offerId) {
         try {
-            orderService.saveOrders(order);
+            orderService.saveOrders(customerId, offerId);
             return ResponseEntity.ok("Order save");
         } catch (OrderNotFoundException | OrdersCustomerNotFoundException | OrderOfferNotFoundException e) {
             return ResponseEntity.badRequest().body((e.getMessage()));
@@ -29,9 +29,21 @@ public class OrdersController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity getOneOrder(@RequestParam Long id) {
+    public ResponseEntity getOneOrder(@RequestParam Long customerId) {
         try {
-            return ResponseEntity.ok(orderService.findOrderById(id));
+            return ResponseEntity.ok(orderService.findOrdersByCustomer(customerId));
+        } catch (OrderNotFoundException e) {
+            return ResponseEntity.badRequest().body((e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/buy")
+    public ResponseEntity buyOrder(@RequestParam Long customerId) {
+        try {
+            orderService.buy(customerId);
+            return ResponseEntity.ok("Order paid for");
         } catch (OrderNotFoundException e) {
             return ResponseEntity.badRequest().body((e.getMessage()));
         } catch (Exception e) {
@@ -47,18 +59,27 @@ public class OrdersController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+//
+//    @GetMapping("/get-all-by-customer")
+//    public ResponseEntity getAllOrderByIdCustomer(@RequestParam Long id) {
+//        try {
+//            return ResponseEntity.ok(orderService.findAllOrdersByIdCustomer(id));
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
-    @PutMapping("/update")
-    public ResponseEntity updateOrder(@RequestBody Order order) {
-        try {
-            orderService.saveOrders(order);
-            return ResponseEntity.ok("Order update");
-        } catch (OrderNotFoundException e) {
-            return ResponseEntity.badRequest().body((e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+//    @PutMapping("/update")
+//    public ResponseEntity updateOrder(@RequestBody Order order) {
+//        try {
+//            orderService.saveOrders(order);
+//            return ResponseEntity.ok("Order update");
+//        } catch (OrderNotFoundException e) {
+//            return ResponseEntity.badRequest().body((e.getMessage()));
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity deleteOrder(@PathVariable Long id) {
