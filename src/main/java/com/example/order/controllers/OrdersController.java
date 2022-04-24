@@ -39,6 +39,17 @@ public class OrdersController {
         }
     }
 
+    @GetMapping("/get_id_offers")
+    public ResponseEntity getIdOrders(@RequestParam Long customerId) {
+        try {
+            return ResponseEntity.ok(orderService.findIdOrdersByCustomer(customerId));
+        } catch (OrderNotFoundException e) {
+            return ResponseEntity.badRequest().body((e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/buy")
     public ResponseEntity buyOrder(@RequestParam Long customerId) {
         try {

@@ -31,7 +31,19 @@ public class OrderService {
     public List<OrderDTO> findOrdersByCustomer(Long idCustomer) throws OrderNotFoundException {
         List<OrderDTO> orders = new ArrayList();
         for (Order order : orderDao.findAllByCustomer(idCustomer)) {
-            orders.add(OrderDTO.from(order));
+            if (!order.getPaid()) {
+                orders.add(OrderDTO.from(order));
+            }
+        }
+        return orders;
+    }
+
+    public List<Long> findIdOrdersByCustomer(Long idCustomer) throws OrderNotFoundException {
+        List<Long> orders = new ArrayList();
+        for (Order order : orderDao.findAllByCustomer(idCustomer)) {
+            if (!order.getPaid()) {
+                orders.add(order.getId());
+            }
         }
         return orders;
     }
